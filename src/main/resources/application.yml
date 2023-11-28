@@ -19,5 +19,5 @@ spring:
         trace: false
         web-allow-others: false
 
-  # openai:
-  # api-key:
+openai:
+  api-key: ${OPENAI_API_KEY}
