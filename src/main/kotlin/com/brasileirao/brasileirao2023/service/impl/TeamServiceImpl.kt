@@ -15,19 +15,37 @@ class TeamServiceImpl(private val teamRepository: TeamRepository) : TeamService 
         return teamRepository.findAll(Sort.by(Sort.Direction.DESC, "score"))
     }
 
+    @Transactional(readOnly = true)
     override fun findBy(id: String): Team {
-        TODO("Not yet implemented")
+        return teamRepository.findById(id).orElseThrow { NoSuchElementException("Time não encontrado com o id: $id")}
     }
 
+    @Transactional
     override fun create(model: Team): Team {
-        TODO("Not yet implemented")
+        if(teamRepository.existsById(model.id)){
+            throw IllegalArgumentException("Time com o id ${model.id} atualmente já existe")
+        }
+
+        return teamRepository.save(model)
     }
 
+    @Transactional
     override fun update(id: String, model: Team): Team {
-        TODO("Not yet implemented")
+        if(model.id != id){
+            throw IllegalArgumentException("O id do time não corresponde com o id do time a ser atualizado")
+        }
+
+        val dbTeam = this.findBy(id)
+
+        dbTeam.name = model.name
+        dbTeam.score = model.score
+
+        return teamRepository.save(dbTeam)
     }
 
+    @Transactional
     override fun delete(id: String) {
-        TODO("Not yet implemented")
+        val dbTeam = this.findBy(id)
+        teamRepository.delete(dbTeam)
     }
 }
